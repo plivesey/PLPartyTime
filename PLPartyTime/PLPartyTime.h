@@ -45,6 +45,6 @@
 @optional
 - (void)partyTime:(PLPartyTime *)partyTime
   connectedToPeer:(MCPeerID *)peer
-     currentPeers:(MCPeerID *)currentPeers;
+     currentPeers:(NSArray *)currentPeers;
 
 @end

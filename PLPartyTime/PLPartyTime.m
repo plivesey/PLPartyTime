@@ -48,7 +48,10 @@
 
 - (void)joinParty
 {
-  
+  // Simultaneously advertise and browse at the same time
+  // We're going to accept all connections on both
+  [self.advertiser startAdvertisingPeer];
+  [self.browser startBrowsingForPeers];
 }
 
 #pragma mark - Communicate
@@ -57,7 +60,10 @@
         withMode:(MCSessionSendDataMode)mode
            error:(NSError **)error
 {
-  return YES;
+  return [self.session sendData:data
+                        toPeers:self.session.connectedPeers
+                       withMode:mode
+                          error:error];
 }
 
 - (BOOL)sendData:(NSData *)data
@@ -65,7 +71,10 @@
         withMode:(MCSessionSendDataMode)mode
            error:(NSError **)error
 {
-  return YES;
+  return [self.session sendData:data
+                        toPeers:peerIDs
+                       withMode:mode
+                          error:error];
 }
 
 #pragma mark - Properties
@@ -121,12 +130,20 @@
 
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
-  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if (state == MCSessionStateConnected &&
+        [self.delegate respondsToSelector:@selector(partyTime:connectedToPeer:currentPeers:)])
+    {
+      [self.delegate partyTime:self connectedToPeer:peerID currentPeers:self.session.connectedPeers];
+    }
+  });
 }
 
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID
 {
-  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.delegate partyTime:self didReceiveData:data fromPeer:peerID];
+  });
 }
 
 - (void)session:(MCSession *)session didReceiveStream:(NSInputStream *)stream withName:(NSString *)streamName fromPeer:(MCPeerID *)peerID
