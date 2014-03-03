@@ -27,13 +27,23 @@
   [super viewDidLoad];
   
   self.edgesForExtendedLayout = UIRectEdgeNone;
+  
+  self.partyTime = [[PLPartyTime alloc] initWithServiceType:@"test"];
+  self.partyTime.delegate = self;
 }
 
 - (IBAction)joinParty:(id)sender
 {
-  self.partyTime = [[PLPartyTime alloc] initWithServiceType:@"test"];
-  self.partyTime.delegate = self;
   [self.partyTime joinParty];
+  
+  [self.tableView reloadData];
+}
+
+- (IBAction)leaveParty:(id)sender
+{
+  [self.partyTime leaveParty];
+  
+  [self.tableView reloadData];
 }
 
 #pragma mark - Table View Delegate/DataSource
@@ -41,13 +51,37 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
   UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-  cell.textLabel.text = ((MCPeerID *)[self.connectedPeers objectAtIndex:indexPath.row]).displayName;
+  if (indexPath.section == 0)
+  {
+    cell.textLabel.text = [UIDevice currentDevice].name;
+  }
+  else
+  {
+    cell.textLabel.text = ((MCPeerID *)[self.connectedPeers objectAtIndex:indexPath.row]).displayName;
+  }
   return cell;
 }
 
 - (int)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+  if (section == 0)
+  {
+    // This is the section for our name
+    if (self.partyTime.connected)
+    {
+      return 1;
+    }
+    else
+    {
+      return 0;
+    }
+  }
   return [self.connectedPeers count];
+}
+
+- (int)numberOfSectionsInTableView:(UITableView *)tableView
+{
+  return 2;
 }
 
 #pragma mark - Party Time Delegate
@@ -60,10 +94,18 @@
 }
 
 - (void)partyTime:(PLPartyTime *)partyTime
-  connectedToPeer:(MCPeerID *)peer
+             peer:(MCPeerID *)peer
+     changedState:(MCSessionState)state
      currentPeers:(NSArray *)currentPeers
 {
-  NSLog(@"Connected to %@", peer.displayName);
+  if (state == MCSessionStateConnected)
+  {
+    NSLog(@"Connected to %@", peer.displayName);
+  }
+  else
+  {
+    NSLog(@"Peer disconnected: %@", peer.displayName);
+  }
   NSLog(@"%@", currentPeers);
   
   self.connectedPeers = currentPeers;

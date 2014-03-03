@@ -16,6 +16,8 @@
 
 @property (nonatomic, weak) id<PLPartyTimeDelegate> delegate;
 
+@property (nonatomic, readonly) BOOL connected;
+@property (nonatomic, readonly) NSArray *connectedPeers;
 @property (nonatomic, readonly, strong) NSString *serviceType;
 @property (nonatomic, readonly, strong) NSString *displayName;
 
@@ -24,6 +26,7 @@
                         displayName:(NSString *)displayName;
 
 - (void)joinParty;
+- (void)leaveParty;
 
 - (BOOL)sendData:(NSData *)data
         withMode:(MCSessionSendDataMode)mode
@@ -39,12 +42,29 @@
 
 @required
 - (void)partyTime:(PLPartyTime *)partyTime
-   didReceiveData:(NSData *)data
-         fromPeer:(MCPeerID *)peerID;
+             peer:(MCPeerID *)peer
+     changedState:(MCSessionState)state
+     currentPeers:(NSArray *)currentPeers;
 
 @optional
 - (void)partyTime:(PLPartyTime *)partyTime
-  connectedToPeer:(MCPeerID *)peer
-     currentPeers:(NSArray *)currentPeers;
+   didReceiveData:(NSData *)data
+         fromPeer:(MCPeerID *)peerID;
+
+- (void)partyTime:(PLPartyTime *)partyTime
+ didReceiveStream:(NSInputStream *)stream
+         withName:(NSString *)streamName
+         fromPeer:(MCPeerID *)peerID;
+
+- (void)partyTime:(PLPartyTime *)partyTime
+didStartReceivingResourceWithName:(NSString *)resourceName
+         fromPeer:(MCPeerID *)peerID
+     withProgress:(NSProgress *)progress;
+
+- (void)partyTime:(PLPartyTime *)partyTime
+didFinishReceivingResourceWithName:(NSString *)resourceName
+         fromPeer:(MCPeerID *)peerID
+            atURL:(NSURL *)localURL
+        withError:(NSError *)error;
 
 @end

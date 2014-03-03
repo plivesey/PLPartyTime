@@ -12,6 +12,7 @@
 @interface PLPartyTime () <MCSessionDelegate, MCNearbyServiceAdvertiserDelegate, MCNearbyServiceBrowserDelegate>
 
 // Public Properties
+@property (nonatomic, readwrite) BOOL connected;
 @property (nonatomic, readwrite, strong) NSString *serviceType;
 @property (nonatomic, readwrite, strong) NSString *displayName;
 
@@ -24,7 +25,7 @@
 
 @implementation PLPartyTime
 
-#pragma mark - Initialization
+#pragma mark - Life Cycle
 
 - (instancetype)initWithServiceType:(NSString *)serviceType
 {
@@ -44,14 +45,33 @@
   return self;
 }
 
-#pragma mark - Join
+- (void)dealloc
+{
+  // Will clean up the session and browsers properly
+  [self leaveParty];
+}
+
+#pragma mark - Membership
 
 - (void)joinParty
 {
-  // Simultaneously advertise and browse at the same time
-  // We're going to accept all connections on both
-  [self.advertiser startAdvertisingPeer];
-  [self.browser startBrowsingForPeers];
+  // If we're already joined, then don't try again. This causes crashes.
+  if (!self.connected)
+  {
+    // Simultaneously advertise and browse at the same time
+    // We're going to accept all connections on both
+    [self.advertiser startAdvertisingPeer];
+    [self.browser startBrowsingForPeers];
+    self.connected = YES;
+  }
+}
+
+- (void)leaveParty
+{
+  [self.session disconnect];
+  [self.advertiser stopAdvertisingPeer];
+  [self.browser stopBrowsingForPeers];
+  self.connected = NO;
 }
 
 #pragma mark - Communicate
@@ -78,6 +98,11 @@
 }
 
 #pragma mark - Properties
+
+- (NSArray *)connectedPeers
+{
+  return self.session.connectedPeers;
+}
 
 - (MCSession *)session
 {
@@ -131,34 +156,55 @@
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
   dispatch_async(dispatch_get_main_queue(), ^{
-    if (state == MCSessionStateConnected &&
-        [self.delegate respondsToSelector:@selector(partyTime:connectedToPeer:currentPeers:)])
-    {
-      [self.delegate partyTime:self connectedToPeer:peerID currentPeers:self.session.connectedPeers];
-    }
+    [self.delegate partyTime:self peer:peerID changedState:state currentPeers:self.session.connectedPeers];
   });
 }
 
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID
 {
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self.delegate partyTime:self didReceiveData:data fromPeer:peerID];
+    if ([self.delegate respondsToSelector:@selector(partyTime:didReceiveData:fromPeer:)])
+    {
+      [self.delegate partyTime:self didReceiveData:data fromPeer:peerID];
+    }
   });
 }
 
 - (void)session:(MCSession *)session didReceiveStream:(NSInputStream *)stream withName:(NSString *)streamName fromPeer:(MCPeerID *)peerID
 {
-  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if ([self.delegate respondsToSelector:@selector(partyTime:didReceiveStream:withName:fromPeer:)])
+    {
+      [self.delegate partyTime:self didReceiveStream:stream withName:streamName fromPeer:peerID];
+    }
+  });
 }
 
 - (void)session:(MCSession *)session didStartReceivingResourceWithName:(NSString *)resourceName fromPeer:(MCPeerID *)peerID withProgress:(NSProgress *)progress
 {
-  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if ([self.delegate respondsToSelector:@selector(partyTime:didStartReceivingResourceWithName:fromPeer:withProgress:)])
+    {
+      [self.delegate partyTime:self
+didStartReceivingResourceWithName:resourceName
+                      fromPeer:peerID
+                  withProgress:progress];
+    }
+  });
 }
 
 - (void)session:(MCSession *)session didFinishReceivingResourceWithName:(NSString *)resourceName fromPeer:(MCPeerID *)peerID atURL:(NSURL *)localURL withError:(NSError *)error
 {
-  
+  dispatch_async(dispatch_get_main_queue(), ^{
+    if ([self.delegate respondsToSelector:@selector(partyTime:didFinishReceivingResourceWithName:fromPeer:atURL:withError:)])
+    {
+      [self.delegate partyTime:self
+didFinishReceivingResourceWithName:resourceName
+                      fromPeer:peerID
+                         atURL:localURL
+                     withError:error];
+    }
+  });
 }
 
 // Required because of an apple bug
@@ -194,12 +240,12 @@
 
 - (void)browser:(MCNearbyServiceBrowser *)browser lostPeer:(MCPeerID *)peerID
 {
-  
+  // Ignore this. We don't need it.
 }
 
 - (void)browser:(MCNearbyServiceBrowser *)browser didNotStartBrowsingForPeers:(NSError *)error
 {
-  
+  // TODO: Handle the error
 }
 
 
