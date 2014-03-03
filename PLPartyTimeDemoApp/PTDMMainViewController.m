@@ -16,7 +16,6 @@
 @property (nonatomic, strong) PLPartyTime *partyTime;
 
 @property (nonatomic, weak) IBOutlet UITableView *tableView;
-@property (nonatomic, strong) NSArray *connectedPeers;
 
 @end
 
@@ -54,10 +53,12 @@
   if (indexPath.section == 0)
   {
     cell.textLabel.text = [UIDevice currentDevice].name;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
   }
   else
   {
-    cell.textLabel.text = ((MCPeerID *)[self.connectedPeers objectAtIndex:indexPath.row]).displayName;
+    cell.textLabel.text = ((MCPeerID *)[self.partyTime.connectedPeers objectAtIndex:indexPath.row]).displayName;
+    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
   }
   return cell;
 }
@@ -76,12 +77,34 @@
       return 0;
     }
   }
-  return [self.connectedPeers count];
+  return [self.partyTime.connectedPeers count];
 }
 
 - (int)numberOfSectionsInTableView:(UITableView *)tableView
 {
   return 2;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  if (indexPath.section == 1)
+  {
+    if (indexPath.row < [self.partyTime.connectedPeers count])
+    {
+      MCPeerID *peerID = [self.partyTime.connectedPeers objectAtIndex:indexPath.row];
+      
+      NSDictionary *dictionary = @{
+                                   @"hello": @"world"
+                                   };
+      NSData *data = [NSKeyedArchiver archivedDataWithRootObject:dictionary];
+      
+      [self.partyTime sendData:data
+                       toPeers:@[ peerID ]
+                      withMode:MCSessionSendDataReliable
+                         error:nil];
+    }
+  }
+  [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark - Party Time Delegate
@@ -108,8 +131,16 @@
   }
   NSLog(@"%@", currentPeers);
   
-  self.connectedPeers = currentPeers;
   [self.tableView reloadData];
+}
+
+- (void)partyTime:(PLPartyTime *)partyTime failedToJoinParty:(NSError *)error
+{
+  [[[UIAlertView alloc] initWithTitle:@"Error"
+                              message:[error localizedFailureReason]
+                             delegate:nil
+                    cancelButtonTitle:@"OK"
+                    otherButtonTitles:nil] show];
 }
 
 @end

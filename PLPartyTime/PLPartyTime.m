@@ -97,6 +97,26 @@
                           error:error];
 }
 
+- (NSOutputStream *)startStreamWithName:(NSString *)streamName
+                                 toPeer:(MCPeerID *)peerID
+                                  error:(NSError *__autoreleasing *)error
+{
+  return [self.session startStreamWithName:streamName
+                                    toPeer:peerID
+                                     error:error];
+}
+
+- (NSProgress *)sendResourceAtURL:(NSURL *)resourceURL
+                         withName:(NSString *)resourceName
+                           toPeer:(MCPeerID *)peerID
+            withCompletionHandler:(void (^)(NSError *error))completionHandler
+{
+  return [self.session sendResourceAtURL:resourceURL
+                                withName:resourceName
+                                  toPeer:peerID
+                   withCompletionHandler:completionHandler];
+}
+
 #pragma mark - Properties
 
 - (NSArray *)connectedPeers
@@ -223,7 +243,7 @@ didFinishReceivingResourceWithName:resourceName
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
 {
-  // TODO: Handle the error
+  [self.delegate partyTime:self failedToJoinParty:error];
 }
 
 #pragma mark - Browser Delegate
@@ -245,7 +265,7 @@ didFinishReceivingResourceWithName:resourceName
 
 - (void)browser:(MCNearbyServiceBrowser *)browser didNotStartBrowsingForPeers:(NSError *)error
 {
-  // TODO: Handle the error
+  [self.delegate partyTime:self failedToJoinParty:error];
 }
 
 

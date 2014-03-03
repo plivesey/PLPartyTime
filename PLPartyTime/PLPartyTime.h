@@ -36,6 +36,15 @@
         withMode:(MCSessionSendDataMode)mode
            error:(NSError **)error;
 
+- (NSOutputStream *)startStreamWithName:(NSString *)streamName
+                                 toPeer:(MCPeerID *)peerID
+                                  error:(NSError *__autoreleasing *)error;
+
+- (NSProgress *)sendResourceAtURL:(NSURL *)resourceURL
+                         withName:(NSString *)resourceName
+                           toPeer:(MCPeerID *)peerID
+            withCompletionHandler:(void (^)(NSError *error))completionHandler;
+
 @end
 
 @protocol PLPartyTimeDelegate <NSObject>
@@ -45,6 +54,9 @@
              peer:(MCPeerID *)peer
      changedState:(MCSessionState)state
      currentPeers:(NSArray *)currentPeers;
+
+- (void)partyTime:(PLPartyTime *)partyTime
+failedToJoinParty:(NSError *)error;
 
 @optional
 - (void)partyTime:(PLPartyTime *)partyTime
