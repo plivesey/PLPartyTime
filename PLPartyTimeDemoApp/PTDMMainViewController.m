@@ -63,7 +63,7 @@
   return cell;
 }
 
-- (int)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
   if (section == 0)
   {
@@ -80,7 +80,7 @@
   return [self.partyTime.connectedPeers count];
 }
 
-- (int)numberOfSectionsInTableView:(UITableView *)tableView
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
   return 2;
 }
@@ -129,7 +129,7 @@
   {
     NSLog(@"Peer disconnected: %@", peer.displayName);
   }
-  NSLog(@"%@", currentPeers);
+  NSLog(@"Current peers: %@", currentPeers);
   
   [self.tableView reloadData];
 }
