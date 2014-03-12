@@ -75,7 +75,7 @@
                         displayName:(NSString *)displayName;
 
 /**
- Call this method to join the party.
+ Call this method to join the party. It will automatically start searching for peers.
  
  When you sucessfully connect to another peer, you will receive a delegate callback to:
  
@@ -85,11 +85,13 @@
 
 /**
  Call this method stop accepting invitations from peers. You will not disconnect from the party, but will not allow incoming connections.
+ 
+ To start searching for peers again, call the joinParty method again.
  */
 - (void)stopAcceptingGuests;
 
 /**
- Call this method to disconnect from the party.
+ Call this method to disconnect from the party. You can reconnect at any time using the joinParty method.
  */
 - (void)leaveParty;
 
