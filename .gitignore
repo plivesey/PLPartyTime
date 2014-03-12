@@ -21,3 +21,7 @@ DerivedData
 
 # CocoaPods
 Pods
+
+# Apple Docs
+docs/**
+

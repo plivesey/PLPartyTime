@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		360AEF7618CFDCE600CD4C36 /* GenerateDocumentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 360AEF7718CFDCE700CD4C36 /* Build configuration list for PBXAggregateTarget "GenerateDocumentation" */;
+			buildPhases = (
+				360AEF7A18CFDCF100CD4C36 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = GenerateDocumentation;
+			productName = GenerateDocumentation;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		36583F1D18C2758E0008A71E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36583F1C18C2758E0008A71E /* Foundation.framework */; };
 		36583F2218C2758E0008A71E /* PLPartyTime.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 36583F2118C2758E0008A71E /* PLPartyTime.h */; };
@@ -35,6 +49,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		360AEF7B18CFE39A00CD4C36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 36583F1118C2758E0008A71E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 360AEF7618CFDCE600CD4C36;
+			remoteInfo = GenerateDocumentation;
+		};
 		36583F2F18C2758E0008A71E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 36583F1118C2758E0008A71E /* Project object */;
@@ -74,7 +95,6 @@
 /* Begin PBXFileReference section */
 		36583F1918C2758E0008A71E /* libPLPartyTime.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPLPartyTime.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		36583F1C18C2758E0008A71E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		36583F2018C2758E0008A71E /* PLPartyTime-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PLPartyTime-Prefix.pch"; sourceTree = "<group>"; };
 		36583F2118C2758E0008A71E /* PLPartyTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PLPartyTime.h; sourceTree = "<group>"; };
 		36583F2318C2758E0008A71E /* PLPartyTime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PLPartyTime.m; sourceTree = "<group>"; };
 		36583F2918C2758E0008A71E /* PLPartyTimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PLPartyTimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,17 +207,8 @@
 			children = (
 				36583F2118C2758E0008A71E /* PLPartyTime.h */,
 				36583F2318C2758E0008A71E /* PLPartyTime.m */,
-				36583F1F18C2758E0008A71E /* Supporting Files */,
 			);
 			path = PLPartyTime;
-			sourceTree = "<group>";
-		};
-		36583F1F18C2758E0008A71E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				36583F2018C2758E0008A71E /* PLPartyTime-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		36583F3218C2758E0008A71E /* PLPartyTimeTests */ = {
@@ -275,6 +286,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				360AEF7C18CFE39A00CD4C36 /* PBXTargetDependency */,
 			);
 			name = PLPartyTime;
 			productName = PLPartyTime;
@@ -368,6 +380,7 @@
 				36583F2818C2758E0008A71E /* PLPartyTimeTests */,
 				36583F4718C27A6C0008A71E /* PLPartyTimeDemoApp */,
 				36583F5E18C27A6D0008A71E /* PLPartyTimeDemoAppTests */,
+				360AEF7618CFDCE600CD4C36 /* GenerateDocumentation */,
 			);
 		};
 /* End PBXProject section */
@@ -400,6 +413,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		360AEF7A18CFDCF100CD4C36 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "APPLEDOC_PATH=${PROJECT_DIR}/bin/appledoc\n$APPLEDOC_PATH \\\n--project-name ${PRODUCT_NAME} \\\n--project-company \"Peter Livesey\" \\\n--company-id \"Peter Livesey\" \\\n--output docs \\\n--keep-undocumented-objects \\\n--keep-intermediate-files \\\n--no-repeat-first-par \\\n--no-warn-invalid-crossref \\\n--exit-threshold 2 \\\n${PROJECT_DIR}/PLPartyTime";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		36583F1518C2758E0008A71E /* Sources */ = {
@@ -439,6 +468,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		360AEF7C18CFE39A00CD4C36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 360AEF7618CFDCE600CD4C36 /* GenerateDocumentation */;
+			targetProxy = 360AEF7B18CFE39A00CD4C36 /* PBXContainerItemProxy */;
+		};
 		36583F3018C2758E0008A71E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 36583F1818C2758E0008A71E /* PLPartyTime */;
@@ -484,6 +518,20 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		360AEF7818CFDCE700CD4C36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		360AEF7918CFDCE700CD4C36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		36583F3A18C2758E0008A71E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -559,7 +607,7 @@
 			buildSettings = {
 				DSTROOT = /tmp/PLPartyTime.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PLPartyTime/PLPartyTime-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -571,7 +619,7 @@
 			buildSettings = {
 				DSTROOT = /tmp/PLPartyTime.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PLPartyTime/PLPartyTime-Prefix.pch";
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -707,6 +755,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		360AEF7718CFDCE700CD4C36 /* Build configuration list for PBXAggregateTarget "GenerateDocumentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				360AEF7818CFDCE700CD4C36 /* Debug */,
+				360AEF7918CFDCE700CD4C36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		36583F1418C2758E0008A71E /* Build configuration list for PBXProject "PLPartyTime" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -723,6 +779,7 @@
 				36583F3E18C2758E0008A71E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		36583F3F18C2758E0008A71E /* Build configuration list for PBXNativeTarget "PLPartyTimeTests" */ = {
 			isa = XCConfigurationList;
@@ -731,6 +788,7 @@
 				36583F4118C2758E0008A71E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		36583F6D18C27A6D0008A71E /* Build configuration list for PBXNativeTarget "PLPartyTimeDemoApp" */ = {
 			isa = XCConfigurationList;
@@ -739,6 +797,7 @@
 				36583F6F18C27A6D0008A71E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		36583F7018C27A6D0008A71E /* Build configuration list for PBXNativeTarget "PLPartyTimeDemoAppTests" */ = {
 			isa = XCConfigurationList;
@@ -747,6 +806,7 @@
 				36583F7218C27A6D0008A71E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

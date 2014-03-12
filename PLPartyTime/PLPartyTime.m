@@ -13,6 +13,7 @@
 
 // Public Properties
 @property (nonatomic, readwrite) BOOL connected;
+@property (nonatomic, readwrite) BOOL acceptingGuests;
 @property (nonatomic, readwrite, strong) NSString *serviceType;
 @property (nonatomic, readwrite, strong) NSString *displayName;
 
@@ -56,21 +57,30 @@
 - (void)joinParty
 {
   // If we're already joined, then don't try again. This causes crashes.
-  if (!self.connected)
+  if (!self.acceptingGuests)
   {
     // Simultaneously advertise and browse at the same time
     // We're going to accept all connections on both
     [self.advertiser startAdvertisingPeer];
     [self.browser startBrowsingForPeers];
     self.connected = YES;
+    self.acceptingGuests = YES;
+  }
+}
+
+- (void)stopAcceptingGuests
+{
+  if (self.acceptingGuests)
+  {
+    [self.advertiser stopAdvertisingPeer];
+    [self.browser stopBrowsingForPeers];
   }
 }
 
 - (void)leaveParty
 {
+  [self stopAcceptingGuests];
   [self.session disconnect];
-  [self.advertiser stopAdvertisingPeer];
-  [self.browser stopBrowsingForPeers];
   self.connected = NO;
 }
 
