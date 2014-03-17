@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name         = "PLPartyTime"
+  s.name         = "PartyTime"
   s.version      = "0.0.1"
   s.summary      = "A light wrapper around MultiPeer connectivity framework which allows apps to quickly connect people without invitations."
 
