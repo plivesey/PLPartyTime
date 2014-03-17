@@ -1,3 +1,13 @@
+## Installation
+
+```pod install partytime
+
+OR
+
+Add PLPartyTime.h and PLPartyTime.m to your project (in the PLPartyTime folder)
+
+## How to Use
+
 This is a light wrapper around the MultiPeer connectivity framework which quickly connects devices without having to send or receive invites. Here's the quick setup:
 
 Each device calls:
