@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "PartyTime"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "A light wrapper around MultiPeer connectivity framework which allows apps to quickly connect people without invitations."
 
   s.description  = <<-DESC
@@ -36,7 +36,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, '7.0'
 
-  s.source       = { :git => "https://github.com/plivesey/PLPartyTime.git", :tag => "0.0.1" }
+  s.source       = { :git => "https://github.com/plivesey/PLPartyTime.git", :tag => "0.0.2" }
 
   s.source_files  = 'PLPartyTime',
   # s.public_header_files = 'Classes/**/*.h'

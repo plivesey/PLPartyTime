@@ -247,8 +247,16 @@ didFinishReceivingResourceWithName:resourceName
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 {
-  // Just immediately accept all incoming invitations
-  invitationHandler(YES, self.session);
+  // Only accept invitations with IDs lower than the current host
+  // If both people accept invitations, then connections are lost
+  if ([[peerID displayName] compare:[self.peerID displayName]] == NSOrderedAscending)
+  {
+    invitationHandler(YES, self.session);
+  }
+  else
+  {
+    invitationHandler(NO, self.session);
+  }
 }
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
