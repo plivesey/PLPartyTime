@@ -74,6 +74,7 @@
   {
     [self.advertiser stopAdvertisingPeer];
     [self.browser stopBrowsingForPeers];
+    self.acceptingGuests = NO;
   }
 }
 
@@ -245,18 +246,18 @@ didFinishReceivingResourceWithName:resourceName
 
 #pragma mark - Advertiser Delegate
 
-- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
+- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser
+didReceiveInvitationFromPeer:(MCPeerID *)peerID
+       withContext:(NSData *)context
+ invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 {
   // Only accept invitations with IDs lower than the current host
   // If both people accept invitations, then connections are lost
-  if ([[peerID displayName] compare:[self.peerID displayName]] == NSOrderedAscending)
+  if ([peerID.displayName compare:self.peerID.displayName] == NSOrderedDescending)
   {
     invitationHandler(YES, self.session);
   }
-  else
-  {
-    invitationHandler(NO, self.session);
-  }
+  // Also, don't decline the invitation. That screws up stuff too.
 }
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
