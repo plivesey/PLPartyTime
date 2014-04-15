@@ -42,4 +42,11 @@ The clients receiving data get the callback:
 ```
 
 And that's it.
-There are a few more features of this library, but I'll let you read through the documentation to find those specifically. 
+There are a few more features of this library, but I'll let you read through the documentation to find those specifically.
+
+# Licensing
+
+This project uses appledoc to produce documentation. Thanks to them for a useful tool.
+I've included the license in bin/licenses.
+
+ 
