@@ -1,3 +1,7 @@
+## NOTE
+
+This library isn't really production ready yet. It's not yet very well tested and has some pretty annoying bugs. Most of these revolve around the weirdness of the multipeer framework. It's a work in progress, and hopefully will come together soon.
+
 ## Installation
 
 ```pod install partytime
