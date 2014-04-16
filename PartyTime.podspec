@@ -39,7 +39,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/plivesey/PLPartyTime.git", :tag => "1.0.1" }
 
   s.source_files  = 'PLPartyTime',
-  # s.public_header_files = 'Classes/**/*.h'
 
   s.framework  = 'MultipeerConnectivity'
 

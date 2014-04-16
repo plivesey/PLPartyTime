@@ -60,9 +60,9 @@
   if (!self.acceptingGuests)
   {
     // Simultaneously advertise and browse at the same time
-    // We're going to accept all connections on both
     [self.advertiser startAdvertisingPeer];
     [self.browser startBrowsingForPeers];
+    
     self.connected = YES;
     self.acceptingGuests = YES;
   }
@@ -82,6 +82,12 @@
 {
   [self stopAcceptingGuests];
   [self.session disconnect];
+  // Must nil out these because if we try to reconnect, we need to recreate them
+  // Else it fails to connect
+  self.session = nil;
+  self.peerID = nil;
+  self.advertiser = nil;
+  self.browser = nil;
   self.connected = NO;
 }
 
@@ -140,8 +146,8 @@
   if (!_session)
   {
     _session = [[MCSession alloc] initWithPeer:self.peerID
-                                  securityIdentity:nil
-                              encryptionPreference:MCEncryptionRequired];
+                              securityIdentity:nil
+                          encryptionPreference:MCEncryptionRequired];
     _session.delegate = self;
   }
   return _session;
@@ -161,7 +167,7 @@
 {
   if (!_advertiser)
   {
-    NSAssert(self.serviceType, @"No service type`. You must initialize this class using the custom intializers.");
+    NSAssert(self.serviceType, @"No service type. You must initialize this class using the custom intializers.");
     _advertiser = [[MCNearbyServiceAdvertiser alloc] initWithPeer:self.peerID
                                                     discoveryInfo:nil
                                                       serviceType:self.serviceType];
@@ -174,7 +180,7 @@
 {
   if (!_browser)
   {
-    NSAssert(self.serviceType, @"No service type`. You must initialize this class using the custom intializers.");
+    NSAssert(self.serviceType, @"No service type. You must initialize this class using the custom intializers.");
     _browser = [[MCNearbyServiceBrowser alloc] initWithPeer:self.peerID
                                                 serviceType:self.serviceType];
     _browser.delegate = self;
@@ -253,11 +259,11 @@ didReceiveInvitationFromPeer:(MCPeerID *)peerID
 {
   // Only accept invitations with IDs lower than the current host
   // If both people accept invitations, then connections are lost
+  // However, this should always be the case since we only send invites in one direction
   if ([peerID.displayName compare:self.peerID.displayName] == NSOrderedDescending)
   {
     invitationHandler(YES, self.session);
   }
-  // Also, don't decline the invitation. That screws up stuff too.
 }
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
@@ -270,11 +276,17 @@ didReceiveInvitationFromPeer:(MCPeerID *)peerID
 - (void)browser:(MCNearbyServiceBrowser *)browser foundPeer:(MCPeerID *)peerID withDiscoveryInfo:(NSDictionary *)info
 {
   // Whenever we find a peer, let's just send them an invitation
+  // But only send invites one way
+  // TODO: What if display names are the same?
   // TODO: Make timeout configurable
-  [browser invitePeer:peerID
-            toSession:self.session
-          withContext:nil
-              timeout:10];
+  if ([peerID.displayName compare:self.peerID.displayName] == NSOrderedAscending)
+  {
+    NSLog(@"Sending invite: Self: %@", self.peerID.displayName);
+    [browser invitePeer:peerID
+              toSession:self.session
+            withContext:nil
+                timeout:10];
+  }
 }
 
 - (void)browser:(MCNearbyServiceBrowser *)browser lostPeer:(MCPeerID *)peerID
